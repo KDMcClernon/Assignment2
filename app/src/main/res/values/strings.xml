@@ -7,4 +7,7 @@
     <string name="high_temp">High: 80</string>
     <string name="humidity">Humidity: 100%</string>
     <string name="pressure">Pressure: 1023 hPa</string>
+    <string name="forecast">Forecast</string>
+    <string name="degree">%d°</string>
+    <string name="forecast_high_temp">High: %f°</string>
 </resources>
