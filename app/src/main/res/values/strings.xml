@@ -16,4 +16,5 @@
     <string name="forecast_humidity">Humidity: %d%%</string>
     <string name="forecast_pressure">Pressure: %dhPa</string>
     <string name="temperature">%s°</string>
+    <string name="get_weather">Get Weather for My Location</string>
 </resources>

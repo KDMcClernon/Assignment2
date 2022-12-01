@@ -17,4 +17,9 @@ class ForecastViewModel @Inject constructor(private val api: OpenWeatherMapApi):
         _forecast.trySend(forecast)
     }
 
+    fun fetchForecast(latitudeLongitude: LatitudeLongitude) = runBlocking {
+        val forecast = api.getForecast(latitudeLongitude.latitude, latitudeLongitude.longitude)
+        _forecast.trySend(forecast)
+    }
+
 }
