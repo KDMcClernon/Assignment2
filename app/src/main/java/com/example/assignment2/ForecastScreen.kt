@@ -22,6 +22,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.intellij.lang.annotations.JdkConstants
 
@@ -42,25 +43,29 @@ val forecastData = (0 until 16).map {
 
 @Composable
 fun ForecastScreen(
-    viewModel: ForecastViewModel = hiltViewModel(),
+    latitudeLongitude: LatitudeLongitude?,
+    forecastViewModel: ForecastViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.forecast.collectAsState(initial = null)
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchData()
-    }
-
-    state?.let {
-        LazyColumn {
-            items(items = forecastData) { item: DayForecast ->
-                ForecastRow(item = item, forecast = it)
-          }
+    if(latitudeLongitude != null) {
+        LaunchedEffect(Unit) {
+            forecastViewModel.fetchForecast(latitudeLongitude)
+        }
+    } else {
+        LaunchedEffect(Unit) {
+            forecastViewModel.fetchData()
         }
     }
+
+    LazyColumn {
+        items(items = forecastData) { item: DayForecast ->
+            ForecastRow(item = item)
+        }
+    }
+
 }
 
 @Composable
-private fun ForecastRow(item: DayForecast, forecast: Forecast) {
+private fun ForecastRow(item: DayForecast) {
     Row(
         modifier = Modifier.background(Color.White),
         verticalAlignment = Alignment.CenterVertically,
@@ -72,7 +77,7 @@ private fun ForecastRow(item: DayForecast, forecast: Forecast) {
         Image(painter = painterResource(id = R.drawable.sun_icon), contentDescription = "")
         Spacer(modifier = Modifier.weight(1f, fill = true))
         Text(
-            text = forecast.forecastData[1].date.toString(),
+            text = item.date.toString(),
             style = TextStyle(
                 fontSize = 16.sp
             )
@@ -80,11 +85,11 @@ private fun ForecastRow(item: DayForecast, forecast: Forecast) {
         Spacer(modifier = Modifier.weight(1f, fill = true))
         Column {
             Text(
-                text = stringResource(id = R.string.forecast_high_temp, forecast.forecastData[1].tempData.maxTemperature.toInt()),
+                text = stringResource(id = R.string.forecast_high_temp, item.temp.max.toInt()),
                 style = textStyle,
             )
             Text(
-                text = stringResource(id = R.string.forecast_low_temp, forecast.forecastData[1].tempData.minTemperature.toInt()),
+                text = stringResource(id = R.string.forecast_low_temp, item.temp.min.toInt()),
                 style = textStyle,
             )
         }
@@ -93,11 +98,11 @@ private fun ForecastRow(item: DayForecast, forecast: Forecast) {
             horizontalAlignment = Alignment.End
         ) {
             Text(
-                text = stringResource(id = R.string.sunrise, forecast.forecastData[1].sunrise),
+                text = stringResource(id = R.string.sunrise, item.sunrise),
                 style = textStyle,
             )
             Text(
-                text = stringResource(id = R.string.sunset, forecast.forecastData[1].sunset),
+                text = stringResource(id = R.string.sunset, item.sunset),
                 style = textStyle,
             )
         }
